@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assassin's Creed — Complete Series Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0A0A0A;
+    --dark: #111111;
+    --card-bg: #141414;
+    --gold: #C8A84B;
+    --gold-light: #F0C060;
+    --red: #8B0000;
+    --red-light: #CC2200;
+    --white: #E8E8E8;
+    --gray: #555555;
+    --gray-light: #888888;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    opacity: 0.6;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  /* ── HERO SECTION ── */
+  #hero {
+    position: relative;
+    height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,168,75,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,168,75,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+  @keyframes gridPulse {
+    0%,100% { opacity: 0.4; } 50% { opacity: 0.8; }
+  }
+
+  /* Animated diamond rings */
+  .diamond-ring {
+    position: absolute; border: 1px solid;
+    transform: rotate(45deg);
+    animation: ringExpand 6s ease-out infinite;
+    pointer-events: none;
+  }
+  .diamond-ring:nth-child(1) { width: 120px; height: 120px; border-color: rgba(200,168,75,0.3); animation-delay: 0s; }
+  .diamond-ring:nth-child(2) { width: 240px; height: 240px; border-color: rgba(200,168,75,0.2); animation-delay: 1s; }
+  .diamond-ring:nth-child(3) { width: 380px; height: 380px; border-color: rgba(200,168,75,0.12); animation-delay: 2s; }
+  .diamond-ring:nth-child(4) { width: 520px; height: 520px; border-color: rgba(139,0,0,0.15); animation-delay: 3s; }
+  .diamond-ring:nth-child(5) { width: 680px; height: 680px; border-color: rgba(200,168,75,0.06); animation-delay: 4s; }
+
+  @keyframes ringExpand {
+    0% { transform: rotate(45deg) scale(0.8); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: rotate(45deg) scale(1.2); opacity: 0; }
+  }
+
+  /* AC Logo SVG */
+  .ac-logo {
+    position: relative; z-index: 2;
+    margin-bottom: 24px;
+    animation: logoFloat 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(200,168,75,0.5));
+  }
+  @keyframes logoFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--gold-light);
+    text-align: center;
+    position: relative; z-index: 2;
+    text-shadow: 0 0 60px rgba(200,168,75,0.4), 0 2px 4px rgba(0,0,0,0.8);
+    animation: titleReveal 1.2s ease forwards;
+    opacity: 0;
+  }
+  @keyframes titleReveal {
+    from { opacity: 0; letter-spacing: 0.4em; }
+    to { opacity: 1; letter-spacing: 0.15em; }
+  }
+
+  .hero-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem; font-weight: 400;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--white); opacity: 0.7;
+    margin-top: 12px; position: relative; z-index: 2;
+    animation: fadeUp 1.4s ease forwards; animation-delay: 0.3s; opacity: 0;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 0.7; transform: translateY(0); }
+  }
+
+  .hero-line {
+    width: 200px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto;
+    position: relative; z-index: 2;
+    animation: lineExpand 1.6s ease forwards; animation-delay: 0.5s;
+    transform: scaleX(0);
+  }
+  @keyframes lineExpand {
+    to { transform: scaleX(1); }
+  }
+
+  .hero-count {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem; letter-spacing: 0.4em;
+    color: var(--gold); text-transform: uppercase;
+    position: relative; z-index: 2;
+    animation: fadeUp 1.4s ease forwards; animation-delay: 0.7s; opacity: 0;
+  }
+
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 6px; background: var(--red); z-index: 100; }
+  .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 4px; background: var(--red); z-index: 100; }
+
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-family: 'Rajdhani', sans-serif; font-size: 0.75rem; letter-spacing: 0.3em;
+    color: var(--gray-light); text-transform: uppercase;
+    animation: scrollBounce 2s ease-in-out infinite;
+  }
+  @keyframes scrollBounce {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+  .scroll-hint::after {
+    content: ''; display: block; width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+
+  /* ── NAV TABS ── */
+  #nav {
+    position: sticky; top: 6px; z-index: 90;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(200,168,75,0.2);
+    padding: 0 40px;
+    display: flex; align-items: center; gap: 0;
+  }
+  .nav-logo {
+    font-family: 'Cinzel', serif; font-size: 0.9rem;
+    color: var(--gold); letter-spacing: 0.15em;
+    margin-right: auto; padding: 16px 0;
+    white-space: nowrap;
+  }
+  .nav-tab {
+    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem;
+    font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gray-light); padding: 18px 20px;
+    cursor: pointer; transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+    position: relative;
+  }
+  .nav-tab:hover, .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    text-align: center; padding: 80px 40px 40px;
+    position: relative;
+  }
+  .section-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.5em; text-transform: uppercase;
+    color: var(--red-light); margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 700;
+    color: var(--gold-light); letter-spacing: 0.1em;
+  }
+  .section-divider {
+    width: 120px; height: 1px; margin: 20px auto 0;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* ── GAMES GRID ── */
+  #games-section { padding: 20px 40px 80px; }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px; max-width: 1400px; margin: 0 auto;
+  }
+
+  .game-card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .game-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px var(--accent-glow, rgba(200,168,75,0.15));
+  }
+
+  .card-stripe {
+    height: 6px; width: 100%;
+  }
+
+  .card-body { padding: 20px; position: relative; }
+
+  .card-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; margin-bottom: 14px;
+  }
+
+  .card-num {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.85rem;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    flex-shrink: 0;
+  }
+
+  .card-year-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 0.15em; padding: 4px 10px;
+    border-radius: 3px; color: #000;
+    align-self: flex-start;
+  }
+
+  .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--white); letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  .card-era {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.82rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .card-divider {
+    height: 1px; background: rgba(255,255,255,0.06); margin: 12px 0;
+  }
+
+  .card-info {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .card-info-row {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Rajdhani', sans-serif; font-size: 0.88rem;
+  }
+  .info-icon { font-size: 0.7rem; opacity: 0.5; }
+  .info-label { color: var(--gray-light); font-weight: 400; }
+  .info-value { color: var(--white); font-weight: 500; margin-left: auto; text-align: right; }
+  .info-hero { font-weight: 600; }
+
+  .card-accent-bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; border-radius: 0 2px 2px 0;
+  }
+
+  /* Release number badge top-right */
+  .card-release-num {
+    position: absolute; top: 12px; right: 12px;
+    font-family: 'Rajdhani', sans-serif; font-size: 0.7rem;
+    letter-spacing: 0.2em; color: var(--gray);
+  }
+
+  /* ── TIMELINE ── */
+  #timeline-section { padding: 20px 40px 80px; }
+
+  .timeline-container {
+    max-width: 900px; margin: 0 auto;
+    position: relative;
+  }
+
+  .timeline-spine {
+    position: absolute; left: 140px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, var(--gold) 5%, var(--gold) 95%, transparent);
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 120px 40px 1fr;
+    gap: 0 20px;
+    align-items: center;
+    margin-bottom: 28px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .timeline-item.visible {
+    opacity: 1; transform: translateX(0);
+  }
+
+  .tl-era {
+    text-align: right;
+    font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .tl-dot-wrap {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .tl-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--gold-light);
+    flex-shrink: 0; position: relative; z-index: 2;
+    transition: transform 0.2s;
+  }
+  .timeline-item:hover .tl-dot { transform: scale(1.4); }
+  .tl-connector {
+    position: absolute; left: 50%; top: 50%;
+    height: 1px; transform-origin: left;
+    opacity: 0.4;
+  }
+
+  .tl-content {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 16px; border-radius: 6px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .timeline-item:hover .tl-content {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(200,168,75,0.15);
+  }
+
+  .tl-title {
+    font-family: 'Cinzel', serif; font-size: 0.92rem; font-weight: 600;
+    color: var(--white);
+  }
+  .tl-place {
+    font-family: 'Rajdhani', sans-serif; font-size: 0.8rem;
+    color: var(--gray-light); margin-left: auto;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── STATS ── */
+  #stats-section {
+    padding: 20px 40px 80px;
+    border-top: 1px solid rgba(200,168,75,0.1);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px; max-width: 1000px; margin: 0 auto;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    padding: 36px 24px; text-align: center;
+    position: relative; overflow: hidden;
+    transition: background 0.2s;
+  }
+  .stat-card:hover { background: #1a1a1a; }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: var(--gold);
+  }
+  .stat-card { cursor: pointer; }
+
+  .stat-hint {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.65rem; letter-spacing: 0.25em;
+    color: var(--gray); margin-top: 10px;
+    opacity: 0.5; transition: opacity 0.2s;
+  }
+  .stat-card:hover .stat-hint { opacity: 1; color: var(--gold); }
+
+  .stat-num {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem; font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--gray-light);
+    margin-top: 8px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 40px;
+    border-top: 1px solid rgba(200,168,75,0.15);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem; letter-spacing: 0.3em;
+    color: var(--gray); text-transform: uppercase;
+  }
+  footer span { color: var(--gold); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--card-bg);
+    border-radius: 12px; max-width: 560px; width: 90%; max-height: 85vh; display: flex; flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s;
+    border: 1px solid rgba(200,168,75,0.2);
+  }
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+  .modal-stripe { height: 8px; }
+  .modal-body { padding: 32px; overflow-y: auto; flex: 1; }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .modal-title { font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 700; color: var(--white); }
+  .modal-close {
+    background: none; border: none; color: var(--gray-light);
+    font-size: 1.4rem; cursor: pointer; padding: 4px 8px;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--gold); }
+
+  .modal-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .modal-row:last-child { border-bottom: none; }
+  .modal-key { color: var(--gray-light); font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; }
+  .modal-val { color: var(--white); font-size: 1rem; font-weight: 600; text-align: right; }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    max-width: 500px; margin: 0 auto 40px;
+    position: relative;
+  }
+  .search-input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(200,168,75,0.3);
+    border-radius: 4px; padding: 12px 20px 12px 44px;
+    color: var(--white); font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem; letter-spacing: 0.05em;
+    outline: none; transition: border-color 0.2s, background 0.2s;
+  }
+  .search-input:focus {
+    border-color: var(--gold);
+    background: rgba(200,168,75,0.05);
+  }
+  .search-icon {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--gray-light); font-size: 1rem; pointer-events: none;
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Filter buttons */
+  .filter-row {
+    display: flex; gap: 8px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 40px;
+  }
+  .filter-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 3px;
+    border: 1px solid rgba(200,168,75,0.3);
+    background: transparent; color: var(--gray-light);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--gold); color: #000; border-color: var(--gold);
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .cursor, .cursor-ring { display: none; }
+    body { cursor: auto; }
+  }
+
+  @media (max-width: 600px) {
+    #nav { padding: 0 16px; }
+    #games-section, #timeline-section, #stats-section { padding: 20px 16px 60px; }
+    .timeline-spine { left: 100px; }
+    .timeline-item { grid-template-columns: 80px 30px 1fr; }
+    .tl-era { font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="top-bar"></div>
+<div class="bottom-bar"></div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="diamond-ring"></div>
+  <div class="diamond-ring"></div>
+  <div class="diamond-ring"></div>
+  <div class="diamond-ring"></div>
+  <div class="diamond-ring"></div>
+
+  <svg class="ac-logo" width="90" height="110" viewBox="0 0 90 110">
+    <polygon points="45,0 80,35 45,55 10,35" fill="none" stroke="#C8A84B" stroke-width="1.5" opacity="0.3"/>
+    <polygon points="45,10 73,35 45,48 17,35" fill="none" stroke="#C8A84B" stroke-width="1" opacity="0.5"/>
+    <line x1="25" y1="28" x2="65" y2="28" stroke="#C8A84B" stroke-width="1" opacity="0.6"/>
+    <!-- Stylized A shape -->
+    <path d="M45 5 L75 90 L60 90 L45 50 L30 90 L15 90 Z" fill="#C8A84B" opacity="0.15"/>
+    <path d="M45 5 L75 90" stroke="#F0C060" stroke-width="2" fill="none"/>
+    <path d="M45 5 L15 90" stroke="#F0C060" stroke-width="2" fill="none"/>
+    <path d="M28 62 L62 62" stroke="#F0C060" stroke-width="2"/>
+    <!-- Hood tip glow -->
+    <circle cx="45" cy="5" r="3" fill="#F0C060" opacity="0.8"/>
+    <!-- Inner triangles -->
+    <path d="M45 20 L60 55 L30 55 Z" fill="none" stroke="#C8A84B" stroke-width="0.8" opacity="0.4"/>
+  </svg>
+
+  <h1 class="hero-title">ASSASSIN'S CREED</h1>
+  <p class="hero-sub">The Complete Series Guide</p>
+  <div class="hero-line"></div>
+  <p class="hero-count">14 Main Games &nbsp;·&nbsp; 2007 — 2025 &nbsp;·&nbsp; Ubisoft</p>
+
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">▲ AC GUIDE</div>
+  <div class="nav-tab active" onclick="scrollToSection('games-section', this)">Games</div>
+  <div class="nav-tab" onclick="scrollToSection('timeline-section', this)">Timeline</div>
+  <div class="nav-tab" onclick="scrollToSection('stats-section', this)">Stats</div>
+</nav>
+
+<!-- GAMES -->
+<section id="games-section">
+  <div class="section-header reveal">
+    <div class="section-label">Release Order</div>
+    <h2 class="section-title">All Main Games</h2>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="search-wrap reveal">
+    <span class="search-icon">⌕</span>
+    <input class="search-input" type="text" id="searchInput" placeholder="Search games, heroes, settings..." oninput="filterGames()">
+  </div>
+
+  <div class="filter-row reveal">
+    <button class="filter-btn active" onclick="filterByEra('all', this)">All</button>
+    <button class="filter-btn" onclick="filterByEra('ancient', this)">Ancient</button>
+    <button class="filter-btn" onclick="filterByEra('medieval', this)">Medieval</button>
+    <button class="filter-btn" onclick="filterByEra('renaissance', this)">Renaissance</button>
+    <button class="filter-btn" onclick="filterByEra('colonial', this)">Colonial</button>
+    <button class="filter-btn" onclick="filterByEra('industrial', this)">Industrial</button>
+  </div>
+
+  <div class="games-grid" id="gamesGrid"></div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline-section">
+  <div class="section-header reveal">
+    <div class="section-label">In-Story Chronology</div>
+    <h2 class="section-title">Historical Timeline</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="timeline-container reveal">
+    <div class="timeline-spine"></div>
+    <div id="timelineList"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats-section">
+  <div class="section-header reveal">
+    <div class="section-label">By The Numbers</div>
+    <h2 class="section-title">Series Stats</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="stats-grid reveal" id="statsGrid"></div>
+</section>
+
+<footer>
+  <p><span>Nothing is true</span> &nbsp;·&nbsp; <span>Everything is permitted</span></p>
+  <p style="margin-top:8px; font-size:0.7rem;">Assassin's Creed © Ubisoft &nbsp;·&nbsp; 2007 — 2025</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-stripe" id="modalStripe"></div>
+    <div class="modal-body">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle"></div>
+        <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">✕</button>
+      </div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const games = [
+  { num:"I",     title:"Assassin's Creed",   year:2007, setting:"Holy Land — The Crusades",         era:"1191 AD",        hero:"Altair Ibn-La'Ahad",          color:"#8B0000", accent:"#CC3333", era_tag:"medieval"   },
+  { num:"II",    title:"Assassin's Creed II", year:2009, setting:"Italy — The Renaissance",           era:"1476–1499 AD",   hero:"Ezio Auditore da Firenze",     color:"#1A4A1A", accent:"#2E7D32", era_tag:"renaissance"},
+  { num:"II",    title:"Brotherhood",         year:2010, setting:"Rome — The Vatican",                era:"1499–1507 AD",   hero:"Ezio Auditore da Firenze",     color:"#1A3A5C", accent:"#1565C0", era_tag:"renaissance"},
+  { num:"II",    title:"Revelations",         year:2011, setting:"Constantinople — Ottoman Empire",   era:"1511–1512 AD",   hero:"Ezio Auditore & Altair",       color:"#4A1A0A", accent:"#BF360C", era_tag:"renaissance"},
+  { num:"III",   title:"Assassin's Creed III",year:2012, setting:"America — The Revolution",          era:"1754–1783 AD",   hero:"Ratonhnhake:ton (Connor)",     color:"#0A2A1A", accent:"#00695C", era_tag:"colonial"   },
+  { num:"IV",    title:"Black Flag",          year:2013, setting:"Caribbean — Age of Pirates",        era:"1715–1722 AD",   hero:"Edward Kenway",                color:"#0A1A3A", accent:"#0277BD", era_tag:"colonial"   },
+  { num:"Rogue", title:"Rogue",               year:2014, setting:"North America & Europe",            era:"1752–1761 AD",   hero:"Shay Patrick Cormac",          color:"#1A1A2E", accent:"#5C35CC", era_tag:"colonial"   },
+  { num:"Unity", title:"Unity",               year:2014, setting:"Paris — French Revolution",         era:"1789–1794 AD",   hero:"Arno Victor Dorian",           color:"#2A0A0A", accent:"#AD1457", era_tag:"industrial" },
+  { num:"Synd.", title:"Syndicate",           year:2015, setting:"London — Industrial Revolution",    era:"1868 AD",        hero:"Jacob & Evie Frye",            color:"#1A1A0A", accent:"#827717", era_tag:"industrial" },
+  { num:"Orig.", title:"Origins",             year:2017, setting:"Ancient Egypt — Ptolemaic Era",     era:"49–43 BC",       hero:"Bayek of Siwa",                color:"#2A1A00", accent:"#E65100", era_tag:"ancient"    },
+  { num:"Odys.", title:"Odyssey",             year:2018, setting:"Ancient Greece",                    era:"431–422 BC",     hero:"Alexios / Kassandra",          color:"#0A1A2A", accent:"#0288D1", era_tag:"ancient"    },
+  { num:"Valh.", title:"Valhalla",            year:2020, setting:"England & Norway — Vikings",        era:"873–878 AD",     hero:"Eivor Wolf-Kissed",            color:"#0A1A0A", accent:"#558B2F", era_tag:"medieval"   },
+  { num:"Mir.",  title:"Mirage",              year:2023, setting:"Baghdad — Islamic Golden Age",      era:"861–870 AD",     hero:"Basim Ibn Ishaq",              color:"#1A0A00", accent:"#F57F17", era_tag:"medieval"   },
+  { num:"Shad.", title:"Shadows",             year:2025, setting:"Feudal Japan",                      era:"1579–1582 AD",   hero:"Naoe & Yasuke",                color:"#1A0A1A", accent:"#7B1FA2", era_tag:"renaissance"},
+];
+
+const timeline = [
+  { title:"Odyssey",          era:"431 BC",   place:"Ancient Greece",      color:"#0288D1" },
+  { title:"Origins",          era:"49 BC",    place:"Ancient Egypt",       color:"#E65100" },
+  { title:"Mirage",           era:"861 AD",   place:"Baghdad",             color:"#F57F17" },
+  { title:"Valhalla",         era:"873 AD",   place:"England & Norway",    color:"#558B2F" },
+  { title:"Assassin's Creed", era:"1191 AD",  place:"Holy Land",           color:"#CC3333" },
+  { title:"AC II",            era:"1476 AD",  place:"Italy — Renaissance", color:"#2E7D32" },
+  { title:"Brotherhood",      era:"1499 AD",  place:"Rome",                color:"#1565C0" },
+  { title:"Revelations",      era:"1511 AD",  place:"Constantinople",      color:"#BF360C" },
+  { title:"Shadows",          era:"1579 AD",  place:"Feudal Japan",        color:"#7B1FA2" },
+  { title:"Black Flag",       era:"1715 AD",  place:"Caribbean",           color:"#0277BD" },
+  { title:"Rogue",            era:"1752 AD",  place:"North America",       color:"#5C35CC" },
+  { title:"AC III",           era:"1754 AD",  place:"American Revolution", color:"#00695C" },
+  { title:"Unity",            era:"1789 AD",  place:"Paris",               color:"#AD1457" },
+  { title:"Syndicate",        era:"1868 AD",  place:"London",              color:"#827717" },
+];
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+// ── RENDER GAMES ──
+function renderGames(list) {
+  const grid = document.getElementById('gamesGrid');
+  grid.innerHTML = '';
+  list.forEach((g, i) => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.style.cssText = `--accent-glow: ${g.accent}33;`;
+    card.style.animationDelay = `${i * 0.05}s`;
+    card.innerHTML = `
+      <div class="card-stripe" style="background:${g.accent}"></div>
+      <div class="card-body">
+        <div class="card-accent-bar" style="background:${g.accent}"></div>
+        <div class="card-release-num">#${i+1}</div>
+        <div class="card-top">
+          <div class="card-num" style="background:${g.color}; color:${g.accent}; font-size:${g.num.length>2?'0.65rem':'0.85rem'}">${g.num}</div>
+          <div class="card-year-badge" style="background:${g.accent}">${g.year}</div>
+        </div>
+        <div class="card-title">${g.title}</div>
+        <div class="card-era" style="color:${g.accent}">${g.era}</div>
+        <div class="card-divider"></div>
+        <div class="card-info">
+          <div class="card-info-row">
+            <span class="info-icon">◈</span>
+            <span class="info-label">Setting</span>
+            <span class="info-value">${g.setting}</span>
+          </div>
+          <div class="card-info-row">
+            <span class="info-icon">▸</span>
+            <span class="info-label">Hero</span>
+            <span class="info-value info-hero" style="color:${g.accent}">${g.hero}</span>
+          </div>
+        </div>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(g));
+    grid.appendChild(card);
+  });
+}
+
+// ── FILTER ──
+function filterGames() {
+  currentSearch = document.getElementById('searchInput').value.toLowerCase();
+  applyFilter();
+}
+function filterByEra(era, btn) {
+  currentFilter = era;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+function applyFilter() {
+  let list = games;
+  if (currentFilter !== 'all') list = list.filter(g => g.era_tag === currentFilter);
+  if (currentSearch) list = list.filter(g =>
+    g.title.toLowerCase().includes(currentSearch) ||
+    g.hero.toLowerCase().includes(currentSearch) ||
+    g.setting.toLowerCase().includes(currentSearch) ||
+    g.era.toLowerCase().includes(currentSearch)
+  );
+  renderGames(list);
+}
+
+// ── TIMELINE ──
+function renderTimeline() {
+  const container = document.getElementById('timelineList');
+  timeline.forEach((t, i) => {
+    const item = document.createElement('div');
+    item.className = 'timeline-item';
+    item.innerHTML = `
+      <div class="tl-era" style="color:${t.color}">${t.era}</div>
+      <div class="tl-dot-wrap">
+        <div class="tl-dot" style="background:${t.color}; border-color:${t.color}"></div>
+      </div>
+      <div class="tl-content">
+        <div class="tl-title">${t.title}</div>
+        <div class="tl-place">${t.place}</div>
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+// ── STATS ──
+const statsData = [
+  {
+    num: '14', label: 'Main Games', color: '#C8A84B',
+    title: '14 Main Games',
+    desc: "From the streets of Jerusalem in 1191 to the shadows of feudal Japan in 1579, Assassin's Creed has delivered 14 mainline titles over 18 years.",
+    items: [
+      { k: 'First Game',      v: "Assassin's Creed (2007)" },
+      { k: 'Latest Game',     v: 'Shadows (2025)' },
+      { k: 'Ezio Trilogy',    v: 'AC II · Brotherhood · Revelations' },
+      { k: 'Origins Trilogy', v: 'Origins · Odyssey · Valhalla' },
+      { k: 'Shortest Gap',    v: 'Unity & Rogue — same year (2014)' },
+      { k: 'Longest Gap',     v: '3 years — Syndicate to Origins' },
+    ]
+  },
+  {
+    num: '18', label: 'Years of History', color: '#0288D1',
+    title: '18 Years of Gaming History',
+    desc: "Since the first blade was unsheathed in 2007, Assassin's Creed has been a constant force in gaming for nearly two decades.",
+    items: [
+      { k: 'Series Start',    v: '2007 — PS3 / Xbox 360' },
+      { k: 'Series Present',  v: '2025 — Current Gen' },
+      { k: 'Peak Frequency',  v: '2013–2014: 3 games in 2 years' },
+      { k: 'Longest Hiatus',  v: '3 years (2015 to 2017)' },
+      { k: 'Developer',       v: 'Ubisoft Montreal & Studios' },
+      { k: 'Platforms',       v: 'PC · PlayStation · Xbox · Switch' },
+    ]
+  },
+  {
+    num: '2500+', label: 'Years of Story', color: '#E65100',
+    title: '2,500+ Years of Story Span',
+    desc: 'The in-universe timeline stretches from 431 BC in ancient Greece to 1868 AD in Victorian London — over two millennia of history.',
+    items: [
+      { k: 'Earliest Setting', v: 'Odyssey — 431 BC, Ancient Greece' },
+      { k: 'Latest Setting',   v: 'Syndicate — 1868 AD, London' },
+      { k: 'Total Span',       v: '~2,300 years of in-game history' },
+      { k: 'Ancient Era',      v: 'Odyssey & Origins (BC period)' },
+      { k: 'Medieval Era',     v: 'AC I · Valhalla · Mirage' },
+      { k: 'Modern Framing',   v: 'Desmond / Layla present-day story' },
+    ]
+  },
+  {
+    num: '9', label: 'Unique Heroes', color: '#AD1457',
+    title: '9 Unique Protagonists',
+    desc: 'Each game introduces a new assassin from a different culture and era, giving the series its rich diversity of characters and stories.',
+    items: [
+      { k: "Altair Ibn-La'Ahad",   v: 'AC I · Revelations' },
+      { k: 'Ezio Auditore',        v: 'AC II · Brotherhood · Revelations' },
+      { k: 'Connor',               v: 'AC III' },
+      { k: 'Edward Kenway',        v: 'Black Flag' },
+      { k: 'Shay Cormac',          v: 'Rogue' },
+      { k: 'Arno / Jacob / Evie',  v: 'Unity · Syndicate' },
+      { k: 'Bayek of Siwa',        v: 'Origins' },
+      { k: 'Alexios / Kassandra',  v: 'Odyssey' },
+      { k: 'Eivor / Basim / Naoe', v: 'Valhalla · Mirage · Shadows' },
+    ]
+  },
+  {
+    num: '3', label: 'Ezio Trilogy', color: '#2E7D32',
+    title: 'The Ezio Trilogy',
+    desc: 'Ezio Auditore da Firenze is the most beloved assassin in the franchise, starring in three full games across Renaissance Italy, Rome, and Constantinople.',
+    items: [
+      { k: "Assassin's Creed II", v: '2009 — Florence & Venice' },
+      { k: 'Brotherhood',         v: '2010 — Rome & The Vatican' },
+      { k: 'Revelations',         v: '2011 — Constantinople' },
+      { k: 'Story Span',          v: '1476 to 1512 AD (36 years)' },
+      { k: 'Remaster',            v: 'Ezio Collection (2016)' },
+      { k: 'Legacy',              v: 'Most iconic AC protagonist' },
+    ]
+  },
+  {
+    num: '1', label: 'Hidden Blade', color: '#CC3333',
+    title: 'The Hidden Blade',
+    desc: 'The iconic weapon of the Assassin Brotherhood — a retractable blade worn on the wrist, used for silent kills throughout the entire series.',
+    items: [
+      { k: 'First Appearance', v: "Assassin's Creed (2007)" },
+      { k: 'Origin',           v: 'Forged in Ancient Egypt — Origins' },
+      { k: 'Creator',          v: 'Isu / precursor civilization' },
+      { k: 'Iconic Move',      v: 'Leap of Faith + air assassination' },
+      { k: 'Variations',       v: 'Poison blade · hookblade · blowpipe' },
+      { k: 'Symbol',           v: 'Core identity of every assassin' },
+    ]
+  },
+];
+
+function renderStats() {
+  const grid = document.getElementById('statsGrid');
+  statsData.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'stat-card';
+    card.innerHTML = `
+      <div class="stat-num">${s.num}</div>
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-hint">CLICK TO EXPLORE ▸</div>
+    `;
+    card.addEventListener('click', () => openStatModal(s));
+    grid.appendChild(card);
+  });
+}
+
+// ── MODAL ──
+function openModal(g) {
+  document.getElementById('modalTitle').textContent = g.title;
+  document.getElementById('modalStripe').style.background = g.accent;
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-row"><span class="modal-key">Release Year</span><span class="modal-val">${g.year}</span></div>
+    <div class="modal-row"><span class="modal-key">In-Game Era</span><span class="modal-val" style="color:${g.accent}">${g.era}</span></div>
+    <div class="modal-row"><span class="modal-key">Setting</span><span class="modal-val">${g.setting}</span></div>
+    <div class="modal-row"><span class="modal-key">Protagonist</span><span class="modal-val" style="color:${g.accent};font-weight:700">${g.hero}</span></div>
+    <div class="modal-row"><span class="modal-key">Historical Period</span><span class="modal-val">${g.era_tag.charAt(0).toUpperCase()+g.era_tag.slice(1)}</span></div>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ── STAT MODAL ──
+function openStatModal(s) {
+  document.getElementById('modalTitle').textContent = s.title;
+  document.getElementById('modalStripe').style.background = s.color;
+  document.getElementById('modalContent').innerHTML = `
+    <p style="font-family:'Rajdhani',sans-serif; font-size:0.95rem; color:var(--gray-light); line-height:1.7; margin-bottom:20px; border-left:3px solid ${s.color}; padding-left:14px;">${s.desc}</p>
+    ${s.items.map(item => `
+      <div class="modal-row">
+        <span class="modal-key">${item.k}</span>
+        <span class="modal-val" style="color:var(--gold-light)">${item.v}</span>
+      </div>
+    `).join('')}
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+// ── NAV SCROLL ──
+function scrollToSection(id, tab) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+}
+
+// ── INTERSECTION OBSERVER ──
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+const tlObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  setTimeout(() => {
+    ring.style.left = e.clientX + 'px';
+    ring.style.top = e.clientY + 'px';
+  }, 80);
+});
+document.addEventListener('mousedown', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1.8)'; });
+document.addEventListener('mouseup', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; });
+
+// ── INIT ──
+renderGames(games);
+renderTimeline();
+renderStats();
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+setTimeout(() => {
+  document.querySelectorAll('.timeline-item').forEach(el => tlObserver.observe(el));
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}, 100);
+</script>
+</body>
+</html>
